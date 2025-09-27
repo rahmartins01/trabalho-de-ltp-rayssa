@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "terget": "ES6",
+    "module": "commonnjs",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
