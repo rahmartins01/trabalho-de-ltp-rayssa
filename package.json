@@ -1,13 +1,14 @@
 {
-  "compilerOptions": {
-    "terget": "ES6",
-    "module": "commonnjs",
-    "rootDir": "src",
-    "outDir": "dist",
-    "strict": true
+  "name": "trabalho-receitas",
+  "version": "1.0.0",
+  "description": "Gerenciador de Receitas Culinárias - Projeto bimestral (TypeScript)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prepare-run": "npm run build && npm run start"
   },
   "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.0.0"
   }
 }

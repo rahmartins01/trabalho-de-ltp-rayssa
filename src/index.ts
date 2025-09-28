@@ -1,44 +1,70 @@
+// src/index.ts
+
+import { Ingrediente } from "./models/Ingrediente";
 import { Receita } from "./models/Receita";
+import { ReceitaDoce } from "./models/ReceitaDoce";
 import { Categoria } from "./models/Categoria";
-import { ReceitaService } from "./Services/ReceitaService";
+import { RepositorioGenerico } from "./services/RepositorioGenerico";
+import { ReceitaService } from "./services/ReceitaService";
 
-// Criando o serviço
-const receitaService = new ReceitaService();
+function main(): void { //void significa a função não retorna nenhum valor
+  try {
+    // Cria repositório e serviço
+    const repo = new RepositorioGenerico<Receita>();
+    const service = new ReceitaService(repo);
 
-// Criando receitas
-const macarrao = new Receita(
-  "Macarrão",
-  Categoria.SALGADO,
-  "Adicione o macarrão na panela e cozinhe por 20 minutos."
-);
+    //Criando receitas e ingredientes
+    const r1 = new Receita(
+      1,
+      "Macarrão ao Alho",
+      Categoria.SALGADO,
+      "Cozinhe o macarrão e refogue no alho."
+    );
+    r1.adicionarIngrediente(new Ingrediente(101, "Macarrão", "500g"));
+    r1.adicionarIngrediente(new Ingrediente(102, "Alho", "3 dentes"));
+    r1.adicionarIngrediente(new Ingrediente(103, "Azeite", "2 colheres"));
 
-const bolo = new Receita(
-  "Bolo de Chocolate",
-  Categoria.DOCE,
-  "Misture os ingredientes e asse no forno por 40 minutos."
-);
+    const r2 = new ReceitaDoce(2, "Bolo Simples", "Misture e asse por 40 minutos.");
+    r2.adicionarIngrediente(new Ingrediente(201, "Farinha", "2 xícaras"));
+    r2.adicionarIngrediente(new Ingrediente(202, "Ovos", "3 unidades"));
+    r2.adicionarIngrediente(new Ingrediente(203, "Açúcar", "1 xícara"));
 
-// Cadastrando receitas no serviço
-receitaService.cadastrar(macarrao);
-receitaService.cadastrar(bolo);
+    // fazendo o cadastro das receitas
+    service.cadastrar(r1);
+    service.cadastrar(r2);
 
-// Listando receitas cadastradas
-receitaService.listar();
+    // listando as receitas cadastradas
+    service.listar();
 
+    // detalhando uma receita expecifica
+    service.detalhar(2);
 
-// Editando uma receita
-const boloEditado = new Receita(
-  "Bolo de Cenoura",
-  Categoria.DOCE,
-  "Misture os ingredientes e asse no forno por 35 minutos."
-);
-receitaService.editar(1, boloEditado);
+    // montando a lista de compras  
+    const lista = service.gerarListaDeCompras();
+    console.log("\n🛒 Lista de compras (agrupada por ingrediente):");
+    lista.forEach((quantidades, nome) => console.log(`- ${nome}: ${quantidades.join(" + ")}`));
 
-// Listando novamente para ver a edição
-receitaService.listar();
+    // editando a primeira receita "r1"
+    const r1Editada = new Receita(
+      1,
+      "Macarrão ao Alho e Óleo",
+      Categoria.SALGADO,
+      r1.getModoPreparo()
+    );
+    r1Editada.adicionarIngrediente(new Ingrediente(101, "Macarrão", "500g"));
+    r1Editada.adicionarIngrediente(new Ingrediente(102, "Alho", "4 dentes")); // alterando a quantidade dos ingredientes
+    r1Editada.adicionarIngrediente(new Ingrediente(103, "Azeite", "2 colheres"));
 
-// Excluindo a primeira receita
-receitaService.excluir(0);
+    service.editar(1, r1Editada);
+    service.detalhar(1);
 
-// Listando de novo
-receitaService.listar();
+    // apagando a receita "r2"
+    service.excluir(2);
+    service.listar();
+
+  } catch (err) {
+    console.error("Erro na aplicação:", (err as Error).message);
+  }
+}
+
+main();
